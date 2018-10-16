@@ -1,0 +1,14 @@
+*.pkl
+*.exe
+*.csv
+temp.data.r
+*.hpp
+*.pyc
+*.Rhistory
+*.fls
+*.aux
+*.bbl
+*.blg
+*.fbd_latexmk
+*.log
+*.gz

@@ -1,0 +1,109 @@
+---
+title: "BTM"
+author: "Oscar T Giles"
+date: "9 October 2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', echo = FALSE}
+import sys
+print(sys.version)
+```
+
+## Using PyThurstonian to fit a Bayesian Thurstonian Model (BTM)
+
+Here we provide a short example of fitting a BTM using a simulated dataset.
+
+First we import PyThurstonian along with a few other useful packages.
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+rootpath = 'M:\Transport_Studies\Work_Projects\PSI\Publication_Projects\PyThurstonian'
+sys.path.append(rootpath)
+from PyThurstonian import thurstonian, simulate_data, run_sample, hdi
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt 
+from multiprocessing import Process #If we want to use multiprocessing
+```
+
+
+## Create a simulated data set
+
+Now we can create a simulated dataset using the simulate_data function from PyThurstonian. 
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+##Dataset properties
+K = 3 # Number of items being ranked
+J = 10 # Number of subjects
+L = 1 #Number of trials (Subjects can contribute more than one trial to the same condition)
+C = 2 #Number of conditions (Number of conditions. Here we assume a within subjects design, but PyThurstonian will automatically handle different design types)
+
+#Beta parameters
+beta = np.array([[0.0, 1.0, 2.0],
+                [0.0, 0.1, 0.2]])        
+
+data, sim_scale = simulate_data(K, J, L, C, beta = beta, seed = 4354356) #Set a seed to recreate the same dataset
+```
+
+Lets data a look at the dataset, which is held in a Pandas dataframe in long (tidy) format.
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+print(data)
+```
+
+We can see that there are three columns which identify the subject, condition and trial number (we can have multiple trials per participant). The remaining columns provide the ranking for each item and must be labeled Y1, Y2,...,YK. Here we only have one factor called condition, but we could add more columns to identify any number of factors. 
+
+## Creating a Thurstonian model instance
+
+Next we create specify our BTM. Before we start we need to convert the subject column of our dataframe to a numeric factor and ensure that it starts from 1 (pandas automatically starts the factor from zero).
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+data['Subj'] = pd.factorize(data['Subj'])[0]+1
+```
+
+Now we are ready to specify our model, which can do like this:
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+myThurst = thurstonian(design_formula = '~0+Condition', data = data, subject_name = "Subj")  
+```
+
+The first argument to the thurstonian class is a design formula. This uses a simple lme4 style syntax, and uses Patsy to create a design matrix under the hood. The second and third arguments pass the dataframe and specify the name of the column containing the subject factor. 
+
+
+## Sampling from the model
+We can easily sample from the model by calling,
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', eval = FALSE}
+myThurst.sample( iter = 5000, adapt_delta = 0.99, rep_data = True)
+```
+
+However, this will only sample on a single core, and it can be beneficial to run multiple samples in parallel. In PyThurstonian this requires a couple of additional steps:
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', eval = FALSE}
+#Call this function to prepare everything to run on multiple cores
+myThurst.pre_sample()        
+
+#Sample with multiprocessing
+P = [Process(target=run_sample, args = (5000,), kwargs = {'temp_fnum': i})  for i in range(cores)]     
+
+#Start sampling and wait for everything to join
+for p in P:
+    p.start()            
+for p in P:
+    p.join()
+
+#This must be called after sampling - PyThurstonian will then gather all the results
+myThurst.post_sample()
+```
+
+PyThurstonian will sample from the posterior defined by the user specified model. Finally we can save the results to file for later analysis:
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', eval = FALSE}
+myThurst.save_samples('MCMC/simple_samples') 
+```
+
