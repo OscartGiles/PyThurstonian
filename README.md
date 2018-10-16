@@ -9,7 +9,11 @@ A simple python module for fitting Thurstonian models using Stan.
 ## Install
 
 ### Backend
-PyThurstonian requires *CmdStan* (http://mc-stan.org/users/interfaces/cmdstan) to be installed on your machine. To get the latest version go to https://github.com/stan-dev/cmdstan/releases and grab the latest release. An instaltion guide can be found on the same page.
+PyThurstonian requires *CmdStan* (http://mc-stan.org/users/interfaces/cmdstan) to be installed on your machine. To get the latest version go to https://github.com/stan-dev/cmdstan/releases and grab the latest release. An install guide can be found on the same page.
+
+Soon this will be replaced with a pre-compiled stan model, as PyThurstonian only requires one model and this will remove the depency on cmdStan. 
+
+In addition the module's setup file is not currently working (will be fixed soon). To use PyThurstonian you need to add PyThurstonian to the Python Path (see the example script). 
 
 
 ## Examples
