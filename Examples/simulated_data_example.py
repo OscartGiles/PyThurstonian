@@ -80,7 +80,7 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
             myThurst.post_sample()
         
 
-        # myThurst.save_samples('Examples/MCMC/simple_samples') #Save the samples for later
+        myThurst.save_samples('Examples/MCMC/simple_samples') #Save the samples for later
 
     
 
@@ -98,28 +98,7 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
     SAVE_FIGS = False
     output_folder = './article/Figures/'
 
-    ############################################
-    #------------------------------------------#
-    #--------------Plot model params-----------#
-    #------------------------------------------#
-    #------------------------------------------#
-    ############################################
-    
-    sigma = 1 / myThurst.scale
-    scale_posterior_means = sigma.mean(0)
-    scale_posterior_hdi = hdi(sigma)
-    
-    mid_point = (scale_posterior_hdi.T.sum(0) / 2)    
-    bounds = np.abs(scale_posterior_hdi.T - mid_point).T
 
-    plt.figure()
-    plt.errorbar(x =range(J), y = mid_point, yerr = bounds.T, fmt = 'none', color = 'k')
-    plt.plot([str(i) for i in range(J)], scale_posterior_means, 'ok')
-    plt.plot([str(i) for i in range(J)], 1/sim_scale, 'or')
-    
-    plt.xlabel('Participant')
-    plt.ylabel('Scale')
-    
     ############################################
     #------------------------------------------#
     #--------------Plot Agreement--------------#
