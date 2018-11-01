@@ -1,9 +1,10 @@
 # PyThurstonian
 A simple python module for fitting Thurstonian models using Stan. 
 
+This is a pre-release version. Use entirely at your own risk. 
 
 ## Install
-PyThurstonian has a number of depencies, all of which are part of the standard Anaconda Python distribution (https://www.anaconda.com/download/). The easiest way to work with PyThurstonian is to download Anaconda.
+PyThurstonian has a number of depencies, all of which are part of the standard Anaconda Python distribution (https://www.anaconda.com/download/). The easiest way to work with PyThurstonian is to download Anaconda. Note that you will need to use the **64 bit version** of Anaconda and PyThurstonian **is only supported on Windows** at the moment (Linux release also planned). 
 
 You can then install PyThurstonian using pip (read the uninstall instructions first). Simple open a command window (or Anaconda Prompt if anaconda is not on your system path) and type:
 
