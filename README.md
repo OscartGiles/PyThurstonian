@@ -5,13 +5,22 @@ A simple python module for fitting Thurstonian models using Stan.
 ## Install
 PyThurstonian has a number of depencies, all of which are part of the standard Anaconda Python distribution (https://www.anaconda.com/download/). The easiest way to work with PyThurstonian is to download Anaconda.
 
-You can then install PyThurstonian using pip. Simple open a command window (or Anaconda Prompt if anaconda is not on your system path) and type:
+You can then install PyThurstonian using pip (read the uninstall instructions first). Simple open a command window (or Anaconda Prompt if anaconda is not on your system path) and type:
 
 ```
 pip install git+https://github.com/OscartGiles/PyThurstonian_public
 ```
 
 To check everything has worked grab the  simulated_data_example.py program in Examples/ folder in this repo. Run the program and it should sample from a Thurstonian model with a simulated dataset. 
+
+## Uninstall
+To uninstall simply run: 
+
+```
+pip uninstall PyThurstonian
+```
+
+However, **if you have run model fits it may not remove all files from your anaconda directory** (this is a bug which will soon be fixed). After uninstalling through pip you may need to manually remove the PyThurstonian folder in your site packages. 
 
 ## Worked example
 The Examples_markdown folder contains an example as an html file. 
