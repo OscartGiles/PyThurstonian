@@ -1,7 +1,8 @@
 *.pkl
 *.exe
+!PyThurstonian/stan_model/thurstonian_cov.exe
 *.csv
-temp.data.r
+PyThurstonian/stan_model/temp.data.R
 *.hpp
 *.pyc
 *.Rhistory
@@ -12,3 +13,5 @@ temp.data.r
 *.fbd_latexmk
 *.log
 *.gz
+
+

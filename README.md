@@ -1,22 +1,17 @@
-# PyThurstonian_public
-A public snapshot of the PyThurstonian repository, which will be released later this year. Unfortunately that means issues and commits are not visible. Unfortunately the full repository cannot be released yet as it contains sensitive data. 
-
-
 # PyThurstonian
 A simple python module for fitting Thurstonian models using Stan. 
 
 
 ## Install
+You can install the latest development version of PyThurstonian using pip (maybe unstable). Offical releases will be available soon.
 
-### Backend
-PyThurstonian requires *CmdStan* (http://mc-stan.org/users/interfaces/cmdstan) to be installed on your machine. To get the latest version go to https://github.com/stan-dev/cmdstan/releases and grab the latest release. An install guide can be found on the same page.
+```
+pip install https://github.com/OscartGiles/PyThurstonian
+```
 
-Soon this will be replaced with a pre-compiled stan model, as PyThurstonian only requires one model and this will remove the depency on cmdStan. 
+To check everything has worked run the simulated_data_example.py program in Examples/ folder. The program should sample from a simple Thurstonian model for a simulated dataset. 
 
-In addition the module's setup file is not currently working (will be fixed soon). To use PyThurstonian you need to add PyThurstonian to the Python Path (see the example script). 
-
-
-## Examples
+## Worked example
 The Examples_markdown folder contains an example as an html file. 
 
 

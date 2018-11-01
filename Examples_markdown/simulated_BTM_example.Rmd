@@ -10,9 +10,13 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
+```
+
 ```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', echo = FALSE}
 import sys
 print(sys.version)
+import os
+os.environ['QT_QPA_PLATFORM_PLUGIN_PATH'] = 'C:/ProgramData/Anaconda3//Library/plugins/platforms'
 ```
 
 ## Using PyThurstonian to fit a Bayesian Thurstonian Model (BTM)
@@ -60,23 +64,23 @@ We can see that there are three columns which identify the subject, condition an
 
 ## Creating a Thurstonian model instance
 
-Next we create specify our BTM. Before we start we need to convert the subject column of our dataframe to a numeric factor and ensure that it starts from 1 (pandas automatically starts the factor from zero).
+Next we create specify our BTM. Before we start we need to convert the subject column of our dataframe to a numeric factor and ensure that it starts from 1, as PyThurstonian makes use of Stan, which indexes from 1 (pandas automatically starts the factor from 0).
 
 ```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
 data['Subj'] = pd.factorize(data['Subj'])[0]+1
 ```
 
-Now we are ready to specify our model, which can do like this:
+Now we are ready to specify our model, which we achieve by creating an instance of the thurstonian class:
 
 ```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
 myThurst = thurstonian(design_formula = '~0+Condition', data = data, subject_name = "Subj")  
 ```
 
-The first argument to the thurstonian class is a design formula. This uses a simple lme4 style syntax, and uses Patsy to create a design matrix under the hood. The second and third arguments pass the dataframe and specify the name of the column containing the subject factor. 
+The first argument to the thurstonian class is a design formula. This uses a simple lme4 style syntax, and uses Patsy (https://patsy.readthedocs.io) to create a design matrix under the hood. The second and third arguments pass the dataframe and specify the name of the column containing the subject factor. 
 
 
 ## Sampling from the model
-We can easily sample from the model by calling,
+Next we sample from the model by calling the sample method on our thurstonian instance:
 
 ```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', eval = FALSE}
 myThurst.sample( iter = 5000, adapt_delta = 0.99, rep_data = True)
@@ -101,9 +105,104 @@ for p in P:
 myThurst.post_sample()
 ```
 
+Notice that we passed a function called run_sample to the Process function. This function is defined outside of the Thurstonian class to enable Pythons Multiprocessing library to be used. 
+
+
 PyThurstonian will sample from the posterior defined by the user specified model. Finally we can save the results to file for later analysis:
 
 ```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe', eval = FALSE}
 myThurst.save_samples('MCMC/simple_samples') 
 ```
 
+
+
+If we wish to reload these samples we simply call:
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+myThurst.load_samples('MCMC/simple_samples')
+```
+
+
+## Exploring the posterior
+
+PyThurstonian comes with a number of convience functions for plotting the data and assessing the model fits. First we will plot our raw data, before examining the aggregate rankings, agreement between participants and performing contrasts between our two conditions.
+
+### Raw data plots
+The following will plot the proportion of subjects who selected each possible rank for both conditions C1 and C2. We use the thurstonian instance's plot_data method to do the plotting, which takes a dictionary of factor levels and a matplotlib axes as arguments:
+
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+conds = ['C1', 'C2']    
+fig, ax = plt.subplots(1,2, sharey = True, figsize = (3, 2))
+
+#Iterate over every condition
+for i, cond in enumerate(conds):              
+
+    myThurst.plot_data(level_dict = {'Condition': cond}, ax = ax[i])
+    ax[i].set_title("Condition: {}".format(cond))
+    ax[i].set_ylim([0,1])
+    
+plt.suptitle("Data Summary")
+
+plt.subplots_adjust(top=0.76,
+                    bottom=0.34,
+                    left=0.185,
+                    right=0.952,
+                    hspace=0.2,
+                    wspace=0.327)
+
+plt.show()
+```
+   
+### Aggregate rankings
+
+Next we can plot the Bayesian estimate of the aggregate ranking for each condition. 
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+fig, ax = plt.subplots(1,2, sharey = True, figsize = (3, 2))
+    
+#Iterate over every condition
+for i, cond in enumerate(conds):                
+
+  myThurst.plot_aggregate(level_dict = {'Condition':cond}, ax = ax[i])            
+  ax[i].set_title("Condition: {}".format(cond))
+
+plt.suptitle("Bayesian Aggregate")
+
+plt.subplots_adjust(top=0.765,
+                    bottom=0.34,
+                    left=0.184,
+                    right=0.952,
+                    hspace=0.2,
+                    wspace=0.322)
+                    
+plt.show()
+```
+
+### Agreement
+
+Here we plot the kendall's W for both the data sets, and over the posterior predictive distribution. 
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+fig, ax = plt.subplots(1, 2, figsize = (4, 2), sharex = True, sharey = True)
+myThurst.plot_kendall_W(level_dict = {'Condition':  'C1'}, ax = ax[0])
+myThurst.plot_kendall_W(level_dict = {'Condition':  'C2'}, ax = ax[1])
+plt.suptitle("Bayesian Agreement")
+plt.show()
+```
+
+### Contrasts
+
+Finally we can perform a Bayesian contrast between the two conditions, summarised using kendall's tau distance. 
+
+```{python, engine.path = 'C:/ProgramData/Anaconda3/Python.exe'}
+fig, ax = plt.subplots(1,1, sharey = True, figsize = (2,1.5))              
+ 
+myThurst.plot_contrast(level_dict_1 = {'Condition':'C1'}, 
+                       level_dict_2 = {'Condition':'C2'},
+                       ax = ax)            
+ax.set_ylim([0, 1])
+ax.set_title("Contrast: C1 vs C2")
+plt.tight_layout()
+plt.show()
+```

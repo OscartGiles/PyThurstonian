@@ -40,10 +40,10 @@ model{
         if (y[i, 1] == 1){
            target += log(normal_cdf(0.0, mu_part[i, 1]* scale[rater[i]] - mu_part[i, 2]* scale[rater[i]], sqrt(2)));   
         }
+		
         else{
             target += log(1 - normal_cdf(0.0, mu_part[i, 1]* scale[rater[i]] - mu_part[i, 2]* scale[rater[i]], sqrt(2))); 
         }
-
 
 	}
 } 
