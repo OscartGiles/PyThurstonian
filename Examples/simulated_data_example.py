@@ -48,7 +48,7 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
     myThurst = thurstonian(design_formula = '~0+Condition', data = data, subject_name = "Subj")   
     
  
-    cores = 6 #Set the number of cores you want to use on your machine
+    cores = 4 #Set the number of cores you want to use on your machine
     resample = True #Set to true to sample from the posterior and save the fit for later. If False will load previous samples
 
     if not resample:
@@ -95,7 +95,7 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
     #------------------------------------------#
     ############################################
 
-    SAVE_FIGS = True
+    SAVE_FIGS = False
     output_folder = './article/Figures/'
 
     ############################################
