@@ -80,7 +80,7 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
             myThurst.post_sample()
         
 
-        myThurst.save_samples('Examples/MCMC/simple_samples') #Save the samples for later
+        # myThurst.save_samples('Examples/MCMC/simple_samples') #Save the samples for later
 
     
 
