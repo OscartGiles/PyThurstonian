@@ -496,15 +496,15 @@ class thurstonian:
         p_val, sample_sra, random_sra = self.sra_p_value(level_dict)
         
         
-        ax.hist(rep_sra, color = 'r', alpha = 0.25, normed = True)
-        ax.hist(random_sra, color = 'b', alpha = 0.25, normed = True)
+        ax.hist(rep_sra, color = 'r', alpha = 0.25, density = True)
+        ax.hist(random_sra, color = 'b', alpha = 0.25, density = True)
         
         ax.axvline(sample_sra, color = 'k', linestyle = '--')
         
         ax.text(0.05, 0.9, 'p = {}'.format(p_val), transform = ax.transAxes)
     
 
-    def plot_kendall_W(self, level_dict, ax  = None):
+    def plot_kendall_W(self, level_dict, ax  = None, text_x_pos = 0.05):
         """Plot the posterior predictive density over kendall's W"""
         if ax == None:        
             ax = plt.gca()
@@ -523,12 +523,12 @@ class thurstonian:
         for i in range(y_rep_cond.shape[0]):
             W[i] = rk.kendall_W(y_rep_cond[i])
 
-        ax.hist(W, color = 'r', alpha = 0.25, normed = True)
+        ax.hist(W, color = 'r', alpha = 0.25, density = True)
         ax.axvline(W.mean(), color = 'k', linestyle = '--')
         ax.axvline(W_sample, color = 'r', linestyle = '--')
        
-        ax.text(0.05, 0.9, 'W = {:.2f}'.format(W_sample), transform = ax.transAxes)
-        ax.text(0.05, 0.8, 'W ppd = {:.2f}'.format(W.mean()), transform = ax.transAxes)
+        ax.text(text_x_pos, 0.9, 'W = {:.2f}'.format(W_sample), transform = ax.transAxes)
+        ax.text(text_x_pos, 0.8, 'W ppd = {:.2f}'.format(W.mean()), transform = ax.transAxes)
 
         ax.set_xlabel("W")
         ax.set_ylabel("Density")
@@ -693,7 +693,7 @@ class thurstonian:
             
         else:
             
-            ax.hist(tau_dist, alpha = 1, color = '#E4F1FE', normed = True)
+            ax.hist(tau_dist, alpha = 1, color = '#E4F1FE', density = True)
             sns.kdeplot(tau_dist, ax = ax, color = '#22313F')
                         
 
@@ -757,7 +757,7 @@ class thurstonian:
         #Create the plot
 #        colors = np.repeat('#E4F1FE', len(comp_bins[0]))   
 #        pdb.set_trace()
-        ax.hist(comp_taus, color = '#E4F1FE', normed = True)
+        ax.hist(comp_taus, color = '#E4F1FE', density = True)
         sns.kdeplot(comp_taus, ax = ax, color = '#22313F')
 #        ax.bar(comp_bins[0], comp_bins[1] / comp_bins[1].sum(),
 #                      color = colors, edgecolor = ['k' for i in range(len(comp_bins[0]))]) 
@@ -800,7 +800,7 @@ class thurstonian:
             all_z_tau[:, part] = rk.kendall_tau_dist_vec(z_rep_cond[:,part], cond_rank)
             
         #Plot the mean taus
-        ax.hist(all_z_tau.mean(1), color = '#FFC0CB', alpha = 0.9, rwidth = 1, normed = True,
+        ax.hist(all_z_tau.mean(1), color = '#FFC0CB', alpha = 0.9, rwidth = 1, density = True,
              edgecolor='k', linewidth=0.5)
 
         ax.axvline(data_taus_mean)
@@ -835,7 +835,7 @@ class thurstonian:
             
                             
         #Plot the mean taus
-        ax.hist(all_z_tau.mean(1), color = '#FFC0CB', alpha = 0.9, rwidth = 1, normed = True,
+        ax.hist(all_z_tau.mean(1), color = '#FFC0CB', alpha = 0.9, rwidth = 1, density = True,
              edgecolor='k', linewidth=0.5)
 
 

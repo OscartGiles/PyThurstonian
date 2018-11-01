@@ -6,6 +6,7 @@ setup(name='PyThurstonian',
       url='https://github.com/OscartGiles/PyThurstonian',
       author='Oscar T Giles',
       author_email='o.t.giles@leeds.ac.uk',
+      include_package_data=True,
       license='BSD-new',
       packages=['PyThurstonian'],
       zip_safe=False)
