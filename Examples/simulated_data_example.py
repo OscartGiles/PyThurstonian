@@ -3,7 +3,10 @@
 #This is just for working with PyThurstonian on my machine. Should remove on release
 import sys
 
+sys.path.append('M:/Transport_Studies/Work_Projects/PSI/Publication_Projects/PyThurstonian')
 from PyThurstonian import thurstonian, simulate_data, run_sample, hdi
+
+# from PyThurstonian import thurstonian, simulate_data, run_sample, hdi
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
@@ -48,8 +51,8 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
     myThurst = thurstonian(design_formula = '~0+Condition', data = data, subject_name = "Subj")   
     
  
-    cores = 4 #Set the number of cores you want to use on your machine
-    resample = True #Set to true to sample from the posterior and save the fit for later. If False will load previous samples
+    cores = 6 #Set the number of cores you want to use on your machine
+    resample = False #Set to true to sample from the posterior and save the fit for later. If False will load previous samples
 
     if not resample:
         myThurst.load_samples('Examples/MCMC/simple_samples')  #Pass the location you want to save the samples (make sure the directory exists)
@@ -80,7 +83,7 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
             myThurst.post_sample()
         
 
-        # myThurst.save_samples('Examples/MCMC/simple_samples') #Save the samples for later
+        myThurst.save_samples('Examples/MCMC/simple_samples') #Save the samples for later
 
     
 
@@ -95,10 +98,31 @@ if __name__ == '__main__': #PyThurstonian can use the Python multiprocessing lib
     #------------------------------------------#
     ############################################
 
-    SAVE_FIGS = False
+    SAVE_FIGS = True
     output_folder = './article/Figures/'
 
+    ############################################
+    #------------------------------------------#
+    #--------------Plot model params-----------#
+    #------------------------------------------#
+    #------------------------------------------#
+    ############################################
+    
+    sigma = 1 / myThurst.scale
+    scale_posterior_means = sigma.mean(0)
+    scale_posterior_hdi = hdi(sigma)
+    
+    mid_point = (scale_posterior_hdi.T.sum(0) / 2)    
+    bounds = np.abs(scale_posterior_hdi.T - mid_point).T
 
+    plt.figure()
+    plt.errorbar(x =range(J), y = mid_point, yerr = bounds.T, fmt = 'none', color = 'k')
+    plt.plot([str(i) for i in range(J)], scale_posterior_means, 'ok')
+    plt.plot([str(i) for i in range(J)], 1/sim_scale, 'or')
+    
+    plt.xlabel('Participant')
+    plt.ylabel('Scale')
+    
     ############################################
     #------------------------------------------#
     #--------------Plot Agreement--------------#

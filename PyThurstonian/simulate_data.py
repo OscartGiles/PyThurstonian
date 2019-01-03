@@ -61,9 +61,8 @@ def simulate_data(K, J, L, C, beta = None, scale = None, seed = None):
     
     e = (res.T * 1/scale_all).T    
     z = mu.copy()
-    z[:,1:] = mu[:, 1:] + e    
-    
-    
+    z[:,1:] = mu[:, 1:] + e       
+  
   
     y = pd.DataFrame(rk.rank(z, axis = -1), columns = ["Y{}".format(i+1) for i in range(z.shape[1])])
     

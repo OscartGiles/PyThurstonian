@@ -14,46 +14,87 @@ stan_data = list(N = dim(data)[1], K = 2, C = 1, J = 1,
                  scale_sd_prior = 0.5)
 
 
-fit <- stan(file = 'thurstonian_cov.stan', data = stan_data, 
-            iter = 10000, chains = 6, control = list(adapt_delta = 0.99, max_treedepth = 15),
+iterations = 10000
+
+fit1 <- stan(file = 'thurstonian_cov.stan', data = stan_data, 
+            iter = iterations, chains = 6, control = list(adapt_delta = 0.99, max_treedepth = 20),
             cores = 6,
             refresh = 1000)
 
-fit2 <- stan(file = 'thurstonian_simple.stan', data = stan_data, 
-            iter = 10000, chains = 6, control = list(adapt_delta = 0.99, max_treedepth = 15),
+fit2 <- stan(file = 'thurstonian_cov_sigma.stan', data = stan_data, 
+             iter = iterations, chains = 6, control = list(adapt_delta = 0.99, max_treedepth = 20),
+             cores = 6,
+             refresh = 1000)
+
+
+fit3 <- stan(file = 'thurstonian_simple.stan', data = stan_data, 
+            iter = iterations, chains = 6, control = list(adapt_delta = 0.99, max_treedepth = 20),
             cores = 6,
             refresh = 1000)
 
 
-print(fit, pars = c("beta", "scale"))
+s1 = as.data.frame(fit1)
+s2 = as.data.frame(fit2)
+s3 = as.data.frame(fit3)
 
-print(fit2, pars = c("beta", "scale"))
-
-
-#Calculate probability of a match from censor model
-z_rep = extract(fit)$z_rep
-y_rep = apply(z_rep, c(1,2), rank)
-y_rep = aperm(y_rep, c(2,3,1))
+sigma1 = s1$`sigma[1]`
+sigma2 = s2$`sigma[1]`
+sigma3 = s3$`sigma[1]`
 
 
-count = 0
-for (i in 1:dim(y_rep)[1]){
-  chose_idx = sample(1:dim(y_rep)[2], 2, replace = FALSE)
-  y_rep_sample = y_rep[i,chose_idx,]
+samps = tibble(s1 = s1$`beta_zero[1,1]`, 
+               s2 = s2$`beta_zero[1,1]`, 
+               s3 = s3$`beta_zero[1,1]`,
+               sigma1 = sigma1, sigma2 = sigma2, sigma3 = sigma3)
+
+
+ggplot(data = samps) + 
+  geom_density(aes(x= s1), alpha = 0.01, color = 'red') +
+  geom_density(aes(x= s2), alpha = 0.01, color = 'blue') +
+  geom_density(aes(x= s3), alpha = 0.01, color = 'green') 
+
+ggplot(data = samps) + 
+  geom_density(aes(x= sigma1), alpha = 0.01, color = 'red') +
+  geom_density(aes(x= sigma2), alpha = 0.01, color = 'blue') +
+  geom_density(aes(x= sigma3), alpha = 0.01, color = 'green') 
+
+
+
+
+print(fit1, pars = c("beta_zero", "sigma"), digits = 4)
+print(fit2, pars = c("beta_zero", "sigma"), digits = 4)
+print(fit3, pars = c("beta_zero", "sigma"), digits = 4)
+
+assert_match = function(mu1, mu2, sigma){
   
-  if (y_rep_sample[1,1] == y_rep_sample[2,1]){
-    count = count + 1
-  }
+  a = (mu1 - mu2) / sqrt(2 * sigma^2)
+  
+  tau = 1 / sigma
+  
+  b = ((mu1 - mu2) * tau) / sqrt(2)
+  
+  return(c(a, b))
   
 }
 
-p_match = count / dim(y_rep)[1]
+mu1 = 0
+mu2 = 4.2
+sigma = 2.0
+tau = 1/ sigma
+
+N = 100000
+d1 = tibble(z1 = rnorm(N, mu1, sigma), z2 = rnorm(N, mu2, sigma))
+d2 = tibble(z1 = rnorm(N, mu1 * tau, 1), z2 = rnorm(N, mu2 * tau, 1))
+
+# ggplot() + 
+#     geom_histogram(data = d1, aes(x = z1, y = ..density..), alpha = 0.2, fill = "red") +
+#       geom_histogram(data = d2, aes(x = z1, y = ..density..), alpha = 0.2, fill = "blue")
+# 
+# 
+# ggplot() + 
+#   geom_histogram(data = d1, aes(x = z2, y = ..density..), alpha = 0.2, fill = "red") +
+#   geom_histogram(data = d2, aes(x = z2, y = ..density..), alpha = 0.2, fill = "blue")
 
 
-#Calculate probability of a match from simple model
-s2 = as_tibble(as.data.frame(fit2)) %>% select('mu_part[1,1]', 'mu_part[1,2]', 'scale[1]')
-phi_x = (s2$`mu_part[1,1]`* s2$`scale[1]` - s2$`mu_part[1,2]`* s2$`scale[1]`) 
-prob = pnorm(0, phi_x, 1)
-inv_prob = 1 - prob
-
-p_match_2 = prob * prob + inv_prob * inv_prob
+d1 %>% summarise(sum(z1 < z2) / n())
+d2 %>% summarise(sum(z1 < z2) / n())

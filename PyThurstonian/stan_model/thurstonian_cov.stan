@@ -35,7 +35,7 @@ model{
 	to_vector(beta_zero) ~ normal(0, beta_sd_prior);
 
 	for (i in 1:N){					
-		z_hat[i] ~ normal(mu_part[i, y_argsort[i]] * scale[rater[i]], 1); 
+		z_hat[i] ~ normal(mu_part[i, y_argsort[i]] * 1/scale[rater[i]], 1); 
 	}
 } 
 
@@ -46,3 +46,5 @@ generated quantities{
 	beta = append_col(rep_vector(0.0, C), beta_zero);
 	
 }
+
+

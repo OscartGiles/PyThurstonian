@@ -175,7 +175,9 @@ def bin_ranks(ranks, K, ignore_warn = False):
             raise RuntimeError("There are a lot of possible permutations. If you really want to run set 'ignore_warn = True'" )
     
     poss_perms = list(permutations(range(1, K+1)))
-    str_perms = ["-".join(map(str, i)) for i in poss_perms]
+
+   
+    str_perms = ['[' + ",".join(map(str, i)) + ']' for i in poss_perms]
     
     counts = np.zeros(len(poss_perms))
     

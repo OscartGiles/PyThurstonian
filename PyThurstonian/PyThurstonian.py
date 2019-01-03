@@ -619,7 +619,7 @@ class thurstonian:
           edgecolor = ['k' for i in range(len(rank_bin[0]))],
           linewidth = line_widths)  
               
-        
+       
         #Set axis details
         plt.sca(ax)
         plt.xticks(rotation=60)
@@ -850,7 +850,7 @@ class thurstonian:
         plt.xlabel(r"Mean $\tau_{kendall}$")
         
         
-def run_sample(iter = 2000, warmup = None, adapt_delta = 0.999, refresh = 250, temp_fnum = 0):        
+def run_sample(iter = 2000, warmup = None, adapt_delta = 0.999, refresh = 250, temp_fnum = 0, seed = 12345):        
 
     """Sample from the posterior. 
     
@@ -868,17 +868,18 @@ def run_sample(iter = 2000, warmup = None, adapt_delta = 0.999, refresh = 250, t
     if warmup == None:
         warmup = iter//2           
     
-    #Call the Stan program through subprocess
-          
-    print("Sampling with Stan. Chain ref: {}".format(temp_fnum))
- 
+    #Call the Stan program through subprocess          
+    print("Sampling with Stan. Chain ref: {}".format(temp_fnum)) 
     
 
-    command = ["{}/thurstonian_cov.exe".format(stan_model_dir), "sample", "num_samples={}".format(iter), 
-        "num_warmup={}".format(warmup), 
+    command = ["{}/thurstonian_cov.exe".format(stan_model_dir), 
+        "sample", "num_samples={}".format(iter), "num_warmup={}".format(warmup), 
         "adapt", "delta={}".format(adapt_delta),
+        "random", "seed={}".format(seed),
+        "id={}".format(temp_fnum+1), 
         "data", "file={}".format(data_file_name), "output", 
         "file={}/temp_sample_file_{}.csv".format(stan_model_dir, temp_fnum), "refresh={}".format(refresh)]
    
+    # pdb.set_trace()
     sp.run(command, check = True)  
     

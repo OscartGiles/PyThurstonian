@@ -77,22 +77,29 @@ def sample_z_hat(mu, sigma, k, seed = None):
     return z_new, y
 
 
+
+
 if __name__ == '__main__':
 
 
   
-    mu = np.array([-1, 1, 0])
-    sigma = 1.0
+    # mu = np.array([-1, 1, 0])
 
-    # z, y = sample_z(mu, sigma, 3, seed = 5434745)
+    # sigma = 1.0
 
-    for i in range(1000):
-        z, y = sample_z_hat(mu, sigma, 3)
+    # # z, y = sample_z(mu, sigma, 3, seed = 5434745)
+
+    # for i in range(1000):
+    #     z, y = sample_z_hat(mu, sigma, 3)
     # print(z)
     # print(y)
 
-# ov = np.array([-2, 4, 10.2, 15.3])
+    ov = np.array([-2, 4, 10.2, 15.3])
 
-# ov_t = ordered_vector(ov)
+    ov_t = ordered_vector(ov)
 
-# ov_new = inverse_ordered_vector(ov_t)
+    ov_new = inverse_ordered_vector(ov_t)
+
+    print(ov)
+    print(ov_t)
+    print(ov_new)

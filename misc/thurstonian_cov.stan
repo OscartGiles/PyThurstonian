@@ -27,20 +27,28 @@ transformed data{
 parameters { 
 	ordered[K] z_hat[N];
 	matrix[C, K-1] beta_zero; //matrix of differences from the first ranking (fixed at zero)
-	vector<lower = 0>[J] scale;
+	vector<lower = 0>[J] sigma;
 } 
 
 transformed parameters{	
+
 	matrix[N, K] mu_part;	
+	vector<lower = 0>[J] tau;
+
+	for (j in 1:J){
+		tau[j] = 1 / sigma[j];
+	}
+
 	mu_part = append_col(rep_vector(0, N), X * beta_zero);	
 }
 
 model{ 
-	scale ~ lognormal(0, scale_sd_prior);
+	sigma ~ lognormal(0, scale_sd_prior);
 	to_vector(beta_zero) ~ normal(0, beta_sd_prior);
 
-	for (i in 1:N){					
-		z_hat[i] ~ normal(mu_part[i, y_argsort[i]] * scale[rater[i]], 1); 
+	for (i in 1:N){				
+			
+		z_hat[i] ~ normal(mu_part[i, y_argsort[i]] * tau[rater[i]], 1); 
 	}
 	
 } 
@@ -48,26 +56,6 @@ model{
 generated quantities{
 
 	matrix[C, K] beta; 	
-	matrix[N, K] z;
-
-	matrix[N, K] z_rep;
-
-
 	//Prepend zeros to beta_zero
 	beta = append_col(rep_vector(0.0, C), beta_zero);
-
-	//Recover z
-
-	for (i in 1:N){
-		for (k in 1:K){
-			z[i, k] = z_hat[i, sort_y_argsort[i, k]];
-
-			z_rep[i,k] = normal_rng(mu_part[i, k] * scale[rater[i]], 1); 
-		}	
-	}
-
-
-
-
-	
 }
