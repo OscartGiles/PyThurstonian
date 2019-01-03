@@ -1,12 +1,8 @@
 """An example of using PyThurstonian using a simualted data set"""
 
-#This is just for working with PyThurstonian on my machine. Should remove on release
+
 import sys
-
-sys.path.append('M:/Transport_Studies/Work_Projects/PSI/Publication_Projects/PyThurstonian')
 from PyThurstonian import thurstonian, simulate_data, run_sample, hdi
-
-# from PyThurstonian import thurstonian, simulate_data, run_sample, hdi
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt 
