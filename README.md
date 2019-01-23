@@ -1,5 +1,5 @@
 # PyThurstonian
-A simple python module for fitting Thurstonian models using Stan. 
+A python module for fitting Thurstonian models using Stan. 
 
 This is a pre-release version. Use entirely at your own risk. 
 
