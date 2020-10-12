@@ -13,5 +13,5 @@ PyThurstonian/stan_model/temp.data.R
 *.fbd_latexmk
 *.log
 *.gz
-
+.DS_Store
 
