@@ -14,4 +14,4 @@ PyThurstonian/stan_model/temp.data.R
 *.log
 *.gz
 .DS_Store
-
+*.egg-info
