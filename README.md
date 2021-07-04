@@ -1,3 +1,6 @@
+## Warning: Needs a lot of work. Plan to do something with this in the second half of 2021. 
+
+
 # PyThurstonian
 A python module for fitting Thurstonian models using Stan. 
 
